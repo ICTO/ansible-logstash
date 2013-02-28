@@ -1,0 +1,3 @@
+---
+# Install Logstash
+- include: tasks/logstash.yml

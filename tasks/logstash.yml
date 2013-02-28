@@ -1,0 +1,99 @@
+---
+# Install Logstash dependencies
+- name: "Install Logstash dependencies"
+  apt: pkg=${item} state=installed update-cache=yes
+  with_items: ${logstash.dependencies}
+  tags:
+    - logstash
+
+# Create Logstash destination
+- name: "Create Logstash destination: ${logstash.dir}"
+  file: path=${logstash.dir} group=root owner=root mode=0755 state=directory
+  tags:
+    - logstash
+
+# Create Logstash destination
+- name: "Create Logstash bin directory: ${logstash.dir}/bin"
+  file: path=${logstash.dir}/bin group=root owner=root mode=0755 state=directory
+  tags:
+    - logstash
+
+# Create Logstash destination
+- name: "Create Logstash etc directory: ${logstash.dir}/etc"
+  file: path=${logstash.dir}/etc group=root owner=root mode=0755 state=directory
+  tags:
+    - logstash
+
+# Install Logstash indexer init script
+- name: "Install Logstash indexer init script"
+  template: src=templates/logstash_indexer.j2 dest=/etc/init.d/${logstash.indexer.service} owner=root group=root mode=0755
+  when_boolean: ${with_indexer}
+  tags:
+    - logstash
+
+# Install Logstash shipper init script
+- name: "Install Logstash shipper init script"
+  template: src=templates/logstash_shipper.j2 dest=/etc/init.d/${logstash.shipper.service} owner=root group=root mode=0755
+  when_boolean: ${with_shipper}
+  tags:
+    - logstash
+
+# Install Logstash indexer config
+- name: "Install Logstash indexer config: ${logstash.indexer.conf}"
+  template: src=templates/logstash_indexer.conf.j2 dest=${logstash.indexer.conf} owner=root group=root mode=0755
+  when_boolean: ${with_indexer}
+  notify:
+    - "Restart Logstash indexer"
+  tags:
+    - logstash
+
+# Install Logstash shipper config
+- name: "Install Logstash shipper config: ${logstash.shipper.conf}"
+  template: src=templates/logstash_shipper.conf.j2 dest=${logstash.shipper.conf} owner=root group=root mode=0755
+  register: shipper_config
+  notify:
+    - "Restart Logstash shipper"
+  when_boolean: ${with_shipper}
+  tags:
+    - logstash
+
+# Install Logstash init script
+# - name: "Install Logstash web init script"
+#   template: src=templates/logstash_web.j2 dest=/etc/init.d/${logstash.service} owner=root group=root mode=0755
+#   when_boolean: ${with_web}
+#   tags:
+#     - logstash
+
+# Fetch Logstash JAR
+- name: "Fetch Logstash: ${logstash.url}/${logstash.jar}"
+  get_url: url=${logstash.url}/${logstash.jar} dest=${logstash.dir}/bin thirsty=yes mode=0440
+  register: get_jar
+  tags:
+    - logstash
+
+# Start Logstash indexer
+- name: "Start Logstash indexer"
+  service: name=${logstash.indexer.service} state=started
+  when_boolean: ${with_indexer}
+  tags:
+    - logstash
+
+# Start Logstash shipper
+- name: "Start Logstash shipper"
+  service: name=${logstash.shipper.service} state=started
+  when_boolean: ${with_shipper}
+  tags:
+    - logstash
+
+# Copy new JAR file to destination
+# - name: "Copy new Logstash JAR: ${logstash.dir}/bin/${logstash.jar}"
+#   copy: src=${tmp_dir}/${logstash.jar} dest=${logstash.dir}/bin owner=root group=root mode=0644
+#   tags:
+#     - logstash
+
+# Stop Logstash service when Logstash JAR file is changed
+# - name: "Start Logstash indexer"
+#   service: name=${logstash.service} state=started
+#   when_changed: ${get_jar}
+#   tags:
+#     - logstash

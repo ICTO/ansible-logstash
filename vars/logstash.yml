@@ -1,0 +1,19 @@
+---
+logstash:
+  url: 'http://logstash.objects.dreamhost.com/release'
+  jar: 'logstash-1.1.9-monolithic.jar'
+  dependencies:
+    - 'openjdk-6-jre'
+    - 'openjdk-6-jdk'
+  dir: '/opt/logstash'
+  conf: '/opt/logstash/etc'
+  indexer: 
+    conf: '/opt/logstash/etc/indexer.conf'
+    service: 'logstash-indexer'
+    name: 'logstash-indexer'
+  shipper: 
+    conf: '/opt/logstash/etc/shipper.conf'
+    service: 'logstash-shipper'
+    name: 'logstash-shipper'
+
+tmp_dir: '/tmp'
