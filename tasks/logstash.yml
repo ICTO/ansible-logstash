@@ -1,7 +1,7 @@
 ---
 # Install Logstash dependencies
 - name: "Install Logstash dependencies"
-  apt: pkg=${item} state=installed update-cache=yes
+  apt: pkg=${item} state=present update_cache=yes
   with_items: ${logstash.dependencies}
   tags:
     - logstash
