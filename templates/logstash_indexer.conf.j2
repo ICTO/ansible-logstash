@@ -16,7 +16,7 @@ output {
 
   elasticsearch {
     #cluster => "logstash"
-    bind_host => "{{ with_indexer_ip }}"
+    #bind_host => "{{ with_elasticsearch_ip }}"
     host => "{{ with_elasticsearch_ip }}"
   }
 }

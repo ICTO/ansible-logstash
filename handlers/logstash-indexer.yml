@@ -1,3 +1,0 @@
----
-- name: "Restart Logstash indexer"
-  service: name=${logstash.indexer.service} state=restarted

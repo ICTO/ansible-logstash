@@ -1,0 +1,4 @@
+---
+# Install Logstash
+- include: logstash.yml tags=logstash
+  when: ansible_distribution in [ 'Debian', 'Ubuntu' ]

@@ -1,3 +1,0 @@
----
-- name: "Restart Logstash shipper"
-  service: name=${logstash.shipper.service} state=restarted

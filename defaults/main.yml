@@ -1,0 +1,5 @@
+---
+with_shipper: True
+with_indexer: True
+with_redis_server_ip: 127.0.0.1
+with_elasticsearch_ip: 127.0.0.1
