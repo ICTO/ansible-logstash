@@ -29,7 +29,7 @@
 # Install Logstash indexer config
 - name: "Install Logstash indexer config"
   sudo: yes
-  action: template src=logstash_indexer.conf.j2 dest=${logstash.indexer.conf} owner=root group=root mode=0755
+  action: template src=logstash_indexer.conf.j2 dest={{ logstash.indexer.conf }} owner=root group=root mode=0755
   when: with_indexer
   notify:
     - "Restart Logstash indexer"
@@ -37,7 +37,7 @@
 # Install Logstash shipper config
 - name: "Install Logstash shipper config"
   sudo: yes
-  action: template src=logstash_shipper.conf.j2 dest=${logstash.shipper.conf} owner=root group=root mode=0755
+  action: template src=logstash_shipper.conf.j2 dest={{ logstash.shipper.conf }} owner=root group=root mode=0755
   when: with_shipper
   register: shipper_config
   notify:
