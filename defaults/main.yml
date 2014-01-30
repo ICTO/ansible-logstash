@@ -1,5 +1,8 @@
 ---
-with_shipper: True
-with_indexer: True
+with_shipper: False
+with_indexer: False
 with_redis_server_ip: 127.0.0.1
+with_redis_server_port: 6379
+with_redis_server_key: logstash
 with_elasticsearch_ip: 127.0.0.1
+with_elasticsearch_port: "9300-9305"

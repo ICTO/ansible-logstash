@@ -1,82 +1,24 @@
 ---
-# Install Logstash dependencies
-- name: "Install Logstash dependencies"
-  sudo: yes
-  action: ${ansible_pkg_mgr} pkg={{ item }} state=installed update_cache=yes
-  with_items: logstash.deb.dependencies
-
-# Create Logstash destination
-- name: "Create Logstash directories"
-  sudo: yes
-  action: file path={{ item }} group=root owner=root mode=0755 state=directory
-  with_items:
-    - '{{ logstash.dir }}'
-    - '{{ logstash.dir }}/bin'
-    - '{{ logstash.dir }}/etc'
-
-# Install Logstash indexer init script
-- name: "Install Logstash indexer init script"
-  sudo: yes
-  action: template src=logstash_indexer.j2 dest=/etc/init.d/{{ logstash.indexer.service }} owner=root group=root mode=0755
-  when: with_indexer
-
-# Install Logstash shipper init script
-- name: "Install Logstash shipper init script"
-  sudo: yes
-  action: template src=logstash_shipper.j2 dest=/etc/init.d/{{ logstash.shipper.service }} owner=root group=root mode=0755
-  when: with_shipper
-
 # Install Logstash indexer config
 - name: "Install Logstash indexer config"
-  sudo: yes
   action: template src=logstash_indexer.conf.j2 dest={{ logstash.indexer.conf }} owner=root group=root mode=0755
   when: with_indexer
   notify:
-    - "Restart Logstash indexer"
+    - "Restart Logstash"
 
 # Install Logstash shipper config
 - name: "Install Logstash shipper config"
-  sudo: yes
   action: template src=logstash_shipper.conf.j2 dest={{ logstash.shipper.conf }} owner=root group=root mode=0755
   when: with_shipper
   register: shipper_config
   notify:
-    - "Restart Logstash shipper"
+    - "Restart Logstash"
 
-# Install Logstash init script
-# - name: "Install Logstash web init script"
-#   template: src=templates/logstash_web.j2 dest=/etc/init.d/${logstash.service} owner=root group=root mode=0755
-#   when_boolean: ${with_web}
-#   tags:
-#     - logstash
+# Set /etc/defaults/logstash to start on boot
+- name:"Change defaults to start logstash on boot"
+  lineinfile: dest=/etc/defaults/logstash regexp="START=no" line="START=yes" state=present mode=0755 owner=root group=root
 
-# Fetch Logstash JAR
-- name: "Fetch Logstash"
-  sudo: yes
-  get_url: url={{ logstash.url }}/{{ logstash.jar }} dest={{ logstash.dir }}/bin thirsty=yes mode=0440
-  register: get_jar
-
-# Start Logstash indexer
-- name: "Start Logstash indexer"
-  sudo: yes
-  action: service name={{ logstash.indexer.service }} state=started
-  when: with_indexer
-
-# Start Logstash shipper
-- name: "Start Logstash shipper"
-  sudo: yes
-  action: service name={{ logstash.shipper.service }} state=started
-  when: with_shipper
-
-# Copy new JAR file to destination
-# - name: "Copy new Logstash JAR: ${logstash.dir}/bin/${logstash.jar}"
-#   copy: src=${tmp_dir}/${logstash.jar} dest=${logstash.dir}/bin owner=root group=root mode=0644
-#   tags:
-#     - logstash
-
-# Stop Logstash service when Logstash JAR file is changed
-# - name: "Start Logstash indexer"
-#   service: name=${logstash.service} state=started
-#   when_changed: ${get_jar}
-#   tags:
-#     - logstash
+# Start Logstash 
+- name: "Start Logstash"
+  action: service name=logstash state=started
+  when: with_indexer or with_shipper

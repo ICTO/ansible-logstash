@@ -1,0 +1,6 @@
+---
+logstash:
+  indexer:
+    conf: '/etc/logstash/conf.d/indexer.conf'
+  shipper:
+    conf: '/etc/logstash/conf.d/shipper.conf'

@@ -1,8 +1,4 @@
 ---
-- name: "Restart Logstash indexer"
+- name: "Restart Logstash"
   sudo: yes
-  action: service name={{ logstash.indexer.service }} state=restarted
-
-- name: "Restart Logstash shipper"
-  sudo: yes
-  action: service name={{ logstash.shipper.service }} state=restarted
+  action: service name=logstash state=restarted
