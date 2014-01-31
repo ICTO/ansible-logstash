@@ -9,5 +9,5 @@
 
 # Install Logstash
 - include: logstash.yml tags=logstash
-  sudo:yes
+  sudo: yes
   when: ansible_distribution in [ 'Debian', 'Ubuntu' ]

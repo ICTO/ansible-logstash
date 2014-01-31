@@ -15,8 +15,8 @@
     - "Restart Logstash"
 
 # Set /etc/defaults/logstash to start on boot
-- name:"Change defaults to start logstash on boot"
-  lineinfile: dest=/etc/defaults/logstash regexp="START=no" line="START=yes" state=present mode=0755 owner=root group=root
+- name: "Change defaults to start logstash on boot"
+  lineinfile: dest=/etc/default/logstash regexp="START=no" line="START=yes" state=present mode=0755 owner=root group=root
 
 # Start Logstash 
 - name: "Start Logstash"
