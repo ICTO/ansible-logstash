@@ -20,5 +20,5 @@
 
 # Start Logstash 
 - name: "Start Logstash"
-  action: service name=logstash state=started
+  action: service name=logstash state=started enabled=true
   when: with_indexer or with_shipper
