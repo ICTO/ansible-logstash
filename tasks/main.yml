@@ -1,7 +1,4 @@
 ---
-# Include variables based on distribution, currently only Debian and Ubuntu is supported
-- include_vars: "{{ansible_os_family}}.yml" 
-
 # Include Debian Elasticsearch logstash repo
 - include: debian-repo.yml tags=logstash
   sudo: yes
